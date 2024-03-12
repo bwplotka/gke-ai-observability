@@ -11,4 +11,11 @@ gcloud container clusters create ${CLUSTER_NAME} \
   --workload-pool=${PROJECT_ID}.svc.id.goog \
   --release-channel=rapid \
   --num-nodes=1 \
-  --monitoring=SYSTEM,CADVISOR,KUBELET,DCGM,POD,DAEMONSET # Available in the future GKE versions
+  --monitoring=SYSTEM,POD,DAEMONSET # Removed not ready packages, we will install manually those resources for now (cadvisor and DCGM).
+
+
+# Make sure to set up kubectl and install
+# DCGM exporter, will be automatically done for you soon with DCGM package.
+# kubectl apply -f fooocus/dcgm-monitoring.yaml
+# Same here, should be part of KUBELET,CADVISOR soon.
+# kubectl apply -f fooocus/gcm-cadvisor.yaml

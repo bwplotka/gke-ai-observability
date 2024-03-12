@@ -19,14 +19,15 @@
 # Color vars for pretty prompts.
 # Feel free to use those colors in registered commands.
 BLACK="\033[0;30m"
-YELLOW="\033[1;33m"
+GREY="\033[38;5;244m"
+YELLOW="\033[0;33m"
 BLUE="\033[0;34m"
 GREEN="\033[0;32m"
 CYAN="\033[0;36m"
 RED="\033[0;31m"
 PURPLE="\033[0;35m"
 BROWN="\033[0;33m"
-WHITE="\033[1;37m"
+WHITE="\033[0;37m"
 COLOR_RESET="\033[0m"
 
 # Shortcuts bindings.
@@ -120,7 +121,7 @@ function rc() {
 # p: print with next command.
 ##
 function p() {
-  PRINT_BUFFER+="${CYAN}${1}${YELLOW}"
+  PRINT_BUFFER+="${GREY}${1}${WHITE}"
   PRINT_BUFFER+=$'\n'
 }
 
@@ -160,9 +161,9 @@ function navigate() {
     # Make sure input will not break the print.
     stty -echo
     if [[ -z $TYPE_SPEED ]]; then
-      echo -en "${prefix}${YELLOW}$print${COLOR_RESET}"
+      echo -en "${prefix}${WHITE}$print${COLOR_RESET}"
     else
-      echo -en "${prefix}${YELLOW}$print${COLOR_RESET}" | pv -qL $[$TYPE_SPEED+(-2 + RANDOM%5)];
+      echo -en "${prefix}${WHITE}$print${COLOR_RESET}" | pv -qL $[$TYPE_SPEED+(-2 + RANDOM%5)];
     fi
     stty echo
 
