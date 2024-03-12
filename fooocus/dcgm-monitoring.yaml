@@ -178,6 +178,11 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: nvidia-dcgm-exporter
+  targetLabels:
+    metadata:
+    - pod
+    - container
+    - node
   endpoints:
   - port: metrics
     interval: 15s

@@ -1,5 +1,5 @@
-gcloud config set project "<you project ID>"
-export CLUSTER_NAME="<cluster name of your choice>"
+# Assuming you set your project via gcloud config set project "<you project ID>"
+export CLUSTER_NAME="kubecon-ai-o11y-1"
 export REGION="us-central1"
 export PROJECT_ID=$(gcloud config get project)
 
@@ -10,5 +10,5 @@ gcloud container clusters create ${CLUSTER_NAME} \
   --workload-pool=${PROJECT_ID}.svc.id.goog \
   --release-channel=rapid \
   --cluster-version=1.29 \
-  --monitoring=SYSTEM,CADVISOR,KUBELET,POD,DAEMONSET \
-  --num-nodes=1
+  --num-nodes=1 \
+  --monitoring=SYSTEM,CADVISOR,KUBELET,DCGM,POD,DAEMONSET # Available in future GKE versions
