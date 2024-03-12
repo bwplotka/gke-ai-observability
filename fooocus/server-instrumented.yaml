@@ -1,0 +1,130 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fooocus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fooocus
+  strategy:
+    # We have only one GPU, so we have to be disruptive in this demo.
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: fooocus
+        ai.gke.io/inference-server: fooocus
+    spec:
+      # required so the sidecar instrumenter can access the service process
+      shareProcessNamespace: true
+      containers:
+      - name: inference-server
+        # https://github.com/ashleykleynhans/fooocus-docker
+        # https://hub.docker.com/r/ashleykza/fooocus/tags
+        image: ashleykza/fooocus:2.2.1
+        resources:
+          requests:
+            cpu: "2"
+            memory: "10Gi"
+            ephemeral-storage: "20Gi"
+            nvidia.com/gpu: 1
+          limits:
+            cpu: "2"
+            memory: "20Gi"
+            ephemeral-storage: "20Gi"
+            nvidia.com/gpu: 1
+        volumeMounts:
+        - mountPath: /dev/shm
+          name: dshm
+      # Derived from https://github.com/grafana/beyla/blob/main/deployments/03-instrumented-app.yml
+      - name: autoinstrumenter
+        image: grafana/beyla:1.3.3
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          privileged: true
+          runAsUser: 0
+        volumeMounts:
+        - mountPath: /config
+          name: beyla-config
+        - mountPath: /sys/kernel/security
+          name: system-config
+        env:
+        - name: BEYLA_CONFIG_PATH
+          value: "/config/beyla-config.yml"
+        - name: BEYLA_SERVICE_NAME
+          value: "fooocus"
+        - name: BEYLA_OPEN_PORT
+          value: "3001" # fooocus app (3000 port is used for nginx that forwards to 3001 for relevant requests)
+        - name: BEYLA_PROMETHEUS_PORT
+          value: "9400"
+        - name: BEYLA_INTERNAL_METRICS_PROMETHEUS_PORT
+          value: "9401"
+        - name: BEYLA_LOG_LEVEL
+          value: "DEBUG"
+      volumes:
+      - name: dshm
+        emptyDir:
+          medium: Memory
+      - name: beyla-config
+        configMap:
+          name: beyla-config
+      - name: system-config
+        configMap:
+          name: system-config
+      nodeSelector:
+        cloud.google.com/gke-accelerator: nvidia-l4
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: system-config
+data:
+  lockdown: none [integrity] confidentiality
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: beyla-config
+data:
+  beyla-config.yml: |
+    routes:
+      unmatched: heuristic
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fooocus
+spec:
+  selector:
+    app: fooocus
+  type: ClusterIP
+  ports:
+  - protocol: TCP
+    port: 3000
+    targetPort: 3000
+---
+apiVersion: monitoring.googleapis.com/v1
+kind: PodMonitoring
+metadata:
+  name: fooocus
+  labels:
+    app: fooocus
+spec:
+  selector:
+    matchLabels:
+      app: fooocus
+  endpoints:
+  - port: 9400
+    interval: 15s
+    metricRelabeling:
+    - regex: >
+        service_namespace|service_name
+      action: labeldrop
+    - sourceLabels: [http_route]
+      regex: >
+        "/run/predict"
+      action: keep
+  - port: 9401
+    path: "/internal/metrics"
+    interval: 15s
