@@ -29,7 +29,8 @@ p "# Let's review fooocus application, instrumented with eBPF for HTTP metrics ð
 r "cat fooocus/server-instrumented-rest.yaml"
 
 p "# Let's install fooocus application!"
-r "kubectl apply -f fooocus/server-instrumented-rest.yaml && kubectl wait --for=condition=Available deployment/fooocus && kubectl get po"
+r "kubectl apply -f fooocus/server-instrumented-rest.yaml"
+r "kubectl wait --timeout=700s --for=condition=Available deployment/fooocus && kubectl get po"
 
 p "# Port forward fooocus port to our machine"
 r "kubectl port-forward service/fooocus 8888:8888 &"
