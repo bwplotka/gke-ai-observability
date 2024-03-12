@@ -121,10 +121,6 @@ spec:
     - regex: >
         service_namespace|service_name
       action: labeldrop
-    - sourceLabels: [http_route]
-      regex: >
-        "/run/predict"
-      action: keep
   - port: 9401
     path: "/internal/metrics"
     interval: 15s

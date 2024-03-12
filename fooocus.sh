@@ -26,13 +26,17 @@ r "$(cat fooocus/2.sh)" "bash fooocus/2.sh"
 r "$(cat fooocus/3.sh)" "bash fooocus/3.sh"
 
 p "# Let's review fooocus application, instrumented with eBPF for HTTP metrics 💪🏽"
-r "cat fooocus/server-instrumented.yaml"
+r "cat fooocus/server-instrumented-rest.yaml"
 
 p "# Let's install fooocus application!"
-r "kubectl apply -f fooocus/server-instrumented.yaml"
+r "kubectl apply -f fooocus/server-instrumented-rest.yaml && kubectl wait --for=condition=Available deployment/fooocus && kubectl get po"
 
-p "Port forward fooocus port to our machine"
-r "kubectl port-forward service/fooocus 3000:3000"
+p "# Port forward fooocus port to our machine"
+r "kubectl port-forward service/fooocus 8888:8888 &"
+
+p "# Let's generate some fishermen!"
+r "cat fooocus/stress.sh"
+r "bash fooocus/stress.sh"
 
 r "That's it, thanks!" "echo '🤙🏽'"
 

@@ -36,7 +36,7 @@ https://github.com/lllyasviel/Fooocus
 4. Install Fooocus inference server on your cluster, instrumented for HTTP metrics with eBPF
    
     ```bash
-    kubectl apply -f fooocus/server-instrumented.yaml
+    kubectl apply -f fooocus/server-instrumented-ui.yaml
     ```
 
 5. Wait for it to come up, in the meantime you can check the logs:
