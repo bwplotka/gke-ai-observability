@@ -2,6 +2,9 @@
 
 Demo of observability setup for AI workloads on GKE
 
+![img.png](img1.png)
+![img.png](img2.png)
+
 https://github.com/lllyasviel/Fooocus
 
 ## Fooocus Observability Demo
@@ -35,8 +38,16 @@ https://github.com/lllyasviel/Fooocus
    
 4. Install Fooocus inference server on your cluster, instrumented for HTTP metrics with eBPF
    
+   If you want UI (without REST API):
+
     ```bash
     kubectl apply -f fooocus/server-instrumented-ui.yaml
+    ```
+
+   If you want without UI (REST API), see `fooocus/stress.sh` on how to access it.
+
+    ```bash
+    kubectl apply -f fooocus/server-instrumented-rest.yaml
     ```
 
 5. Wait for it to come up, in the meantime you can check the logs:
