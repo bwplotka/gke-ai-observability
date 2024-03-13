@@ -15,7 +15,7 @@ function cat() {
 
 clear
 
-export CLUSTER_NAME="kubecon-ai-o11y-1"
+export CLUSTER_NAME="kubecon-ai-o11y"
 export REGION="us-central1"
 export PROJECT_ID=$(gcloud config get project)
 
@@ -30,7 +30,7 @@ r "cat fooocus/server-instrumented-rest.yaml"
 
 p "# Let's install fooocus application!"
 r "kubectl apply -f fooocus/server-instrumented-rest.yaml"
-r "kubectl wait --timeout=700s --for=condition=Available deployment/fooocus && kubectl get po"
+r "kubectl wait --timeout=1200s --for=condition=Available deployment/fooocus && kubectl get po"
 
 p "# Port forward fooocus port to our machine"
 r "kubectl port-forward service/fooocus 8888:8888 &"

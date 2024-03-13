@@ -56,10 +56,20 @@ https://github.com/lllyasviel/Fooocus
    kubectl logs -f -l app=fooocus
    ```
    
+Unfortunately it's configured to download GBs (in total) of deps and models on start.
+   
 6. Setup port-forwarding
+
+   For UI:
 
    ```bash
    kubectl port-forward service/fooocus 3000:3000
+   ```
+   
+   For REST:
+
+   ```bash
+   kubectl port-forward service/fooocus 3000:8088
    ```
 
 7. Open 3000 port

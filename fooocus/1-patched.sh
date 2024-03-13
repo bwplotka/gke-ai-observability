@@ -1,5 +1,5 @@
 # Assuming you set your project via gcloud config set project "<you project ID>"
-export CLUSTER_NAME="kubecon-ai-o11y-1"
+export CLUSTER_NAME="kubecon-ai-o11y"
 export REGION="us-central1"
 export PROJECT_ID=$(gcloud config get project)
 
